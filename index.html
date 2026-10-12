@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#173f32">
+  <title>Spice Garden | Restaurant Ordering</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- Choose customer or staff -->
+  <section id="role-chooser">
+    <div class="role-box">
+      <div class="eyebrow">WELCOME TO SPICE GARDEN</div>
+      <h1>How would you like to continue?</h1>
+      <p>Choose the customer ordering page or the staff order-management page.</p>
+
+      <div class="role-cards">
+        <article class="role-card">
+          <div class="emoji">🍽️</div>
+          <h2>Customer</h2>
+          <p>Browse dishes, add items to your cart and place a demo order.</p>
+          <button onclick="enterCustomer()">Continue as customer →</button>
+        </article>
+
+        <article class="role-card staff">
+          <div class="emoji">🧑‍🍳</div>
+          <h2>Staff</h2>
+          <p>Sign in to view customer orders and update their status.</p>
+          <button onclick="enterStaff()">Staff login →</button>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <header>
+    <div>
+      <div class="brand">✦ Spice <span>Garden</span></div>
+      <div class="tag">FRESH FLAVOURS · MADE WITH CARE</div>
+    </div>
+    <button class="pillbtn" onclick="scrollToCart()">
+      Your order · <span id="header-count">0</span>
+    </button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <div class="eyebrow">A better way to order</div>
+        <h1>Your meal. Your choice.</h1>
+        <p>
+          Explore our menu and add your favourite dishes.
+          Suggestions are optional, and you can skip anything you don't want.
+          Place a demo order to see your order confirmation.
+        </p>
+      </div>
+      <div class="hero-note">
+        <strong>✉ Order updates</strong>
+        View a demo confirmation and sample notification previews after checkout.
+      </div>
+    </section>
+
+    <div class="notice">
+      <strong>You're in control:</strong>
+      Choose only the dishes you want. Recommendations are always optional.
+    </div>
+
+    <!-- Optional recommendations -->
+    <section class="recs" aria-live="polite">
+      <div class="recs-head">
+        <div>
+          <div class="eyebrow">Based on your basket</div>
+          <h2>Would you like to complete your meal?</h2>
+          <p id="rec-subtitle">A few optional ideas. Feel free to skip them.</p>
+        </div>
+        <span class="optional">OPTIONAL · YOU DECIDE</span>
+      </div>
+
+      <div id="rec-groups" class="rec-groups"></div>
+
+      <div id="all-hidden" class="dismissed" hidden>
+        <span>Suggestions hidden. Continue without extras.</span>
+        <button class="text-button" onclick="showAllRecs()">Show suggestions again</button>
+      </div>
+
+      <div class="hide-recs">
+        <button class="text-button" onclick="hideAllRecs()">Hide all suggestions ×</button>
+      </div>
+    </section>
+
+    <div class="layout">
+      <section>
+        <div class="section-title">
+          <h2>Explore the menu</h2>
+          <p>Choose only what you want.</p>
+        </div>
+
+        <div class="toolbar">
+          <input
+            id="search"
+            class="search"
+            type="search"
+            placeholder="⌕ Search dishes..."
+            aria-label="Search dishes"
+          >
+
+          <div class="filters">
+            <button class="filter active" data-filter="All">All</button>
+            <button class="filter" data-filter="Soup">Soups</button>
+            <button class="filter" data-filter="Starter">Starters</button>
+            <button class="filter" data-filter="Main Course">Main course</button>
+            <button class="filter" data-filter="Beverage">Drinks</button>
+            <button class="filter" data-filter="Dessert">Desserts</button>
+            <button class="filter" data-filter="Side">Sides</button>
+          </div>
+        </div>
+
+        <div id="menu" class="menu"></div>
+      </section>
+
+      <!-- Shopping cart -->
+      <aside class="cart" id="order-panel">
+        <div class="cart-title">
+          <h2>Your order</h2>
+          <span class="count" id="count">0 items</span>
+        </div>
+
+        <div id="cart-items"></div>
+
+        <div class="totals">
+          <div class="total-row">
+            <span>Subtotal</span>
+            <strong id="subtotal">₹0.00</strong>
+          </div>
+          <div class="total-row">
+            <span>GST (5%)</span>
+            <strong id="gst">₹0.00</strong>
+          </div>
+          <div class="total-row grand">
+            <span>Total</span>
+            <span id="grand">₹0.00</span>
+          </div>
+        </div>
+
+        <button class="checkout" onclick="openCheckout()">Place demo order →</button>
+        <p class="smallprint">
+          Demo only. No real payment is processed and no email is sent.
+        </p>
+        <p id="status" class="smallprint" role="status"></p>
+      </aside>
+    </div>
+  </main>
+
+  <footer>
+    <p>SPICE GARDEN · RESTAURANT ORDERING SYSTEM</p>
+    <p>Demo website · No real payment or email integration is connected.</p>
+    <button class="staff-link" onclick="openStaff()">Staff login</button>
+  </footer>
+
+  <!-- Checkout modal -->
+  <div class="modal-backdrop" id="modal-backdrop">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="eyebrow">Order checkout</div>
+      <h2 id="modal-title">Your order details</h2>
+      <p>
+        Enter your details to create a demo order confirmation.
+        This prototype does not actually send emails or take payments.
+      </p>
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="cust-name">Customer name</label>
+          <input id="cust-name" autocomplete="name" placeholder="Your name">
+        </div>
+
+        <div class="field">
+          <label for="cust-email">Customer email</label>
+          <input id="cust-email" type="email" autocomplete="email" placeholder="you@example.com">
+        </div>
+
+        <div class="field">
+          <label for="cust-phone">Phone number (optional)</label>
+          <input id="cust-phone" type="tel" autocomplete="tel" placeholder="Phone number">
+        </div>
+
+        <div class="field">
+          <label for="payment">Payment method (demo)</label>
+          <select id="payment">
+            <option value="UPI">UPI (demo)</option>
+            <option value="Card">Credit/debit card (demo)</option>
+            <option value="Cash on delivery">Pay at restaurant</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary" onclick="closeCheckout()">Cancel</button>
+        <button class="primary" onclick="placeOrder()">Confirm demo order</button>
+      </div>
+
+      <div id="order-result" hidden></div>
+    </section>
+  </div>
+
+  <!-- Staff dashboard -->
+  <div id="staff-backdrop" role="dialog" aria-modal="true" aria-label="Staff portal">
+    <section class="staff-shell">
+      <div class="staff-top">
+        <div>
+          <div class="eyebrow">Spice Garden · Staff area</div>
+          <h2>Order management</h2>
+          <p class="staff-muted">Review demo orders and update their status.</p>
+        </div>
+        <button class="secondary" onclick="closeStaff()">Close ×</button>
+      </div>
+
+      <div id="staff-login" class="staff-login">
+        <h3>Staff sign in</h3>
+        <p class="staff-muted">
+          Demo login only. Do not use these credentials for a live website.
+        </p>
+
+        <label for="staff-user">Username</label>
+        <input id="staff-user" autocomplete="username" placeholder="Username">
+
+        <label for="staff-pass">Password</label>
+        <input id="staff-pass" type="password" autocomplete="current-password" placeholder="Password">
+
+        <button class="primary" onclick="staffLogin()">Sign in</button>
+        <p id="staff-login-error" class="error-message" role="alert"></p>
+
+        <p class="staff-muted">
+          Demo username: <strong>staff</strong><br>
+          Demo password: <strong>spice123</strong>
+        </p>
+      </div>
+
+      <div id="staff-dashboard" hidden>
+        <div class="dashboard-heading">
+          <div>
+            <strong>Customer orders</strong>
+            <p class="staff-muted">Orders saved in this browser appear here.</p>
+          </div>
+          <button class="secondary" onclick="renderStaffOrders()">Refresh orders</button>
+        </div>
+
+        <div id="staff-orders" class="staff-orders"></div>
+
+        <p class="staff-muted">
+          For orders to synchronize across different devices, this website needs a shared
+          backend and database.
+        </p>
+        <button class="secondary" onclick="staffLogout()">Log out</button>
+      </div>
+    </section>
+  </div>
+<script src="script.js"></script>
+</body>
+</html>
